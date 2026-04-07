@@ -11,43 +11,26 @@
 
 ## 目录
 
-- [深度分析文档 (`docs/`)](#深度分析文档-docs) — 遥测、模型代号、卧底模式、远程控制、未来路线图
+- [文档 (`docs/`)](#文档-docs) — 架构、子系统、工具、命令、桥接层
 - [缺失模块说明](#缺失模块说明108-个模块) — 108 个被 feature gate 移除的模块
 - [架构概览](#架构概览) — 入口 → 查询引擎 → 工具/服务/状态
-- [构建说明](#构建说明) — 为什么不能直接编译
+- [构建说明](#构建说明) — 如何尝试本地构建
 
 ---
 
-## 深度分析文档 (`docs/`)
+## 文档 (`docs/`)
 
-基于 v2.1.88 反编译源码的分析报告，中英双语。
+代码库的结构性文档，便于研究和探索。
 
 ```
 docs/
-├── en/                                        # English
-│   ├── [01-telemetry-and-privacy.md]          # Telemetry & Privacy — what's collected, why you can't opt out
-│   ├── [02-hidden-features-and-codenames.md]  # Codenames (Capybara/Tengu/Numbat), feature flags, internal vs external
-│   ├── [03-undercover-mode.md]                # Undercover Mode — hiding AI authorship in open-source repos
-│   ├── [04-remote-control-and-killswitches.md]# Remote Control — managed settings, killswitches, model overrides
-│   └── [05-future-roadmap.md]                 # Future Roadmap — Numbat, KAIROS, voice mode, unreleased tools
-│
-└── zh/                                        # 中文
-    ├── [01-遥测与隐私分析.md]                    # 遥测与隐私 — 收集了什么，为什么无法退出
-    ├── [02-隐藏功能与模型代号.md]                # 隐藏功能 — 模型代号，feature flag，内外用户差异
-    ├── [03-卧底模式分析.md]                     # 卧底模式 — 在开源项目中隐藏 AI 身份
-    ├── [04-远程控制与紧急开关.md]                # 远程控制 — 托管设置，紧急开关，模型覆盖
-    └── [05-未来路线图.md]                       # 未来路线图 — Numbat，KAIROS，语音模式，未上线工具
+├── architecture.md       # 整体架构深度解析
+├── subsystems.md         # 主要子系统详细说明
+├── tools.md              # 全部 ~40 个 Agent 工具参考
+├── commands.md           # 全部斜杠命令参考
+├── bridge.md             # VS Code / JetBrains IDE 桥接层
+└── exploration-guide.md  # 如何导航和研究本源码库
 ```
-
-> 点击文件名即可跳转到对应报告。
-
-| # | 主题 | 核心发现 | 链接 |
-|---|------|---------|------|
-| 01 | **遥测与隐私** | 双层分析管道（1P→Anthropic, Datadog）。环境指纹、进程指标、每个事件携带会话/用户 ID。**没有面向用户的退出开关**。`OTEL_LOG_TOOL_DETAILS=1` 可记录完整工具输入。 | [EN](docs/en/01-telemetry-and-privacy.md) · [中文](docs/zh/01-遥测与隐私分析.md) |
-| 02 | **隐藏功能与代号** | 动物代号体系（Capybara v8, Tengu, Fennec→Opus 4.6, **Numbat** 下一代）。Feature flag 用随机词对掩盖用途。内部用户获得更好的 prompt 和验证代理。隐藏命令：`/btw`、`/stickers`。 | [EN](docs/en/02-hidden-features-and-codenames.md) · [中文](docs/zh/02-隐藏功能与模型代号.md) |
-| 03 | **卧底模式** | Anthropic 员工在公开仓库自动进入卧底模式。模型指令："**不要暴露你的掩护身份**" — 剥离所有 AI 归属，commit 看起来像人类写的。**没有强制关闭选项。** | [EN](docs/en/03-undercover-mode.md) · [中文](docs/zh/03-卧底模式分析.md) |
-| 04 | **远程控制与 Killswitch** | 每小时轮询 `/api/claude_code/settings`。危险变更弹出阻塞对话框 — **拒绝 = 程序退出**。6+ 紧急开关（绕过权限、快速模式、语音模式、分析 sink）。GrowthBook 可无同意改变任何用户行为。 | [EN](docs/en/04-remote-control-and-killswitches.md) · [中文](docs/zh/04-远程控制与紧急开关.md) |
-| 05 | **未来路线图** | **Numbat** 代号确认。Opus 4.7 / Sonnet 4.8 开发中。**KAIROS** = 完全自主代理模式，心跳 `<tick>`、推送通知、PR 订阅。语音模式（push-to-talk）已就绪。发现 17 个未上线工具。 | [EN](docs/en/05-future-roadmap.md) · [中文](docs/zh/05-未来路线图.md) |
 
 ---
 
@@ -188,11 +171,11 @@ Copyright (c) Anthropic. All rights reserved.
 
 | 项目 | 数量 |
 |------|------|
-| 源文件 (.ts/.tsx) | ~1,884 |
-| 代码行数 | ~512,664 |
+| 源文件 (.ts/.tsx) | ~1,916 |
+| 代码行数 | ~519,426 |
 | 最大单文件 | `query.ts` (~785KB) |
-| 内置工具 | ~40+ |
-| 斜杠命令 | ~80+ |
+| 内置工具 | ~43 |
+| 斜杠命令 | ~100+ |
 | 依赖 (node_modules) | ~192 个包 |
 | 运行时 | Bun（编译为 Node.js >= 18 bundle）|
 
@@ -251,17 +234,20 @@ src/
 │   ├── handlers/            #   命令处理器
 │   └── transports/          #   I/O 传输 (stdio, structured)
 │
-├── commands/                # ~80 个斜杠命令
+├── commands/                # ~100 个斜杠命令
 ├── components/              # React/Ink 终端 UI
-├── entrypoints/             # 应用入口点
+├── entrypoints/             # 应用入口点（cli.tsx、mcp.ts、sdk/ 等）
 ├── hooks/                   # React hooks
+├── screens/                 # 顶层界面组件（REPL.tsx 等）
 ├── services/                # 业务逻辑层
 ├── state/                   # 应用状态
 ├── tasks/                   # 任务实现
-├── tools/                   # 40+ 工具实现
+├── tools/                   # 43 个工具实现
 ├── types/                   # 类型定义
 ├── utils/                   # 工具函数（最大目录）
-└── vendor/                  # 原生模块源码存根
+├── vim/                     # Vim 模式支持
+├── voice/                   # 语音模式（push-to-talk）
+└── shims/                   # 运行时垫片
 ```
 
 ---
@@ -271,8 +257,8 @@ src/
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         入口层                                      │
-│  cli.tsx ──> main.tsx ──> REPL.tsx (交互式)                        │
-│                     └──> QueryEngine.ts (headless/SDK)              │
+│  entrypoints/cli.tsx ──> main.tsx ──> screens/REPL.tsx (交互式)      │
+│                                └──> QueryEngine.ts (headless/SDK)    │
 └──────────────────────────────┬──────────────────────────────────────┘
                                │
                                ▼
@@ -293,15 +279,35 @@ src/
 
 ## 构建说明
 
-本源码**不能直接从本仓库编译**：
+本仓库包含完整的构建配置（`tsconfig.json`、`bunfig.toml`、`biome.json`、`scripts/`），但**实际构建仍受限**：
 
-- 缺少 `tsconfig.json`、构建脚本和 Bun bundler 配置
-- `feature()` 调用是 Bun 编译时内建函数 — 在打包时解析
+- `feature()` 调用是 Bun 编译时内建函数 — 在打包时解析，缺少 Anthropic 内部的 feature flag 值
 - `MACRO.VERSION` 在构建时注入
 - `process.env.USER_TYPE === 'ant'` 部分是 Anthropic 内部的
+- 108 个被 feature gate 移除的模块在 `src/` 中不存在，编译会报错
 - 编译后的 `cli.js` 是一个自包含的 12MB bundle，只需 Node.js >= 18
 
-**构建说明详见 [QUICKSTART.md](QUICKSTART.md)。**
+可以运行 `bun run build` 尝试构建，但预期会因缺失模块而失败。
+
+---
+
+## MCP 探索服务器 (`mcp-server/`)
+
+独立的 [Model Context Protocol](https://modelcontextprotocol.io/) 服务器，让任何 MCP 客户端都能探索本源码库。支持 **STDIO**、**Streamable HTTP**、**SSE** 三种传输方式。
+
+暴露了 **8 个工具、3 个资源、5 个 prompt**，用于导航 ~1,900 个文件、512K+ 行的代码库。
+
+| 传输方式 | 适用场景 |
+|----------|----------|
+| STDIO | Claude Desktop、本地 Claude Code、VS Code |
+| Streamable HTTP (`POST/GET /mcp`) | 现代 MCP 客户端、远程部署 |
+| Legacy SSE | 旧版 MCP 客户端 |
+
+---
+
+## Web 界面 (`web/`)
+
+基于 Next.js 的聊天界面（`claude-code-web`），提供对源码的可视化交互探索入口。
 
 ---
 
