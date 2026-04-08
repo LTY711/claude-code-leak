@@ -1,17 +1,8 @@
-# Bridge Layer (VS Code / JetBrains IDE Integration)
+# 桥接层（VS Code / JetBrains IDE 集成）
 
-## Architecture Overview
+> Claude Code 各主要子系统的详细文档。此为英文原版，中文翻译版正在整合中。
 
-The bridge (`src/bridge/`, 32 files) connects Claude Code CLI sessions to
-remote IDE extensions (VS Code, JetBrains) and the claude.ai web UI. It is
-gated behind `feature('BRIDGE_MODE')` which defaults to `false`.
-
-### Protocols
-
-The bridge uses **two transport generations**:
-
-| Version | Read Path | Write Path | Negotiation |
-|---------|-----------|------------|-------------|
+---------|-----------|------------|-------------|
 | **v1 (env-based)** | WebSocket to Session-Ingress (`ws(s)://.../v1/session_ingress/ws/{sessionId}`) | HTTP POST to Session-Ingress | Environments API poll/ack/dispatch |
 | **v2 (env-less)** | SSE stream via `SSETransport` | `CCRClient` → `/worker/*` endpoints | Direct `POST /v1/code/sessions/{id}/bridge` → worker JWT |
 

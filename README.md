@@ -60,7 +60,7 @@ Claude Code is Anthropic's official CLI tool for interacting with Claude directl
 | **Language** | TypeScript (strict) |
 | **Runtime** | [Bun](https://bun.sh) |
 | **Terminal UI** | [React](https://react.dev) + [Ink](https://github.com/vadimdemedes/ink) |
-| **Scale** | ~1,900 files · 512,000+ lines of code |
+| **Scale** | ~1,916 files · 519,000+ lines of code |
 
 ---
 
@@ -71,9 +71,9 @@ For in-depth guides, see the [`docs/`](docs/) directory:
 | Guide | Description |
 |-------|-------------|
 | **[Architecture](docs/architecture.md)** | Core pipeline, startup sequence, state management, rendering, data flow |
-| **[Tools Reference](docs/tools.md)** | Complete catalog of all ~40 agent tools with categories and permission model |
-| **[Commands Reference](docs/commands.md)** | All ~85 slash commands organized by category |
-| **[Subsystems Guide](docs/subsystems.md)** | Deep dives into Bridge, MCP, Permissions, Plugins, Skills, Tasks, Memory, Voice |
+| **[Tools Reference](docs/tools.md)** | Complete catalog of all 40 agent tools with categories and permission model |
+| **[Commands Reference](docs/commands.md)** | All ~100 slash commands organized by category |
+| **[Subsystems Guide](docs/subsystems.md)** | Deep dives into Bridge, MCP, Permissions, Plugins, Skills, Tasks, Memory, Voice, Buddy, Vim, Keybindings, OAuth |
 | **[Exploration Guide](docs/exploration-guide.md)** | How to navigate the codebase — study paths, grep patterns, key files |
 
 Also see: [CONTRIBUTING.md](CONTRIBUTING.md) · [MCP Server README](mcp-server/README.md)
@@ -160,7 +160,7 @@ Replace `/absolute/path/to/claude-code` with your actual clone path.
 | Tool | Description |
 |------|-------------|
 | `list_tools` | List all ~40 agent tools with source files |
-| `list_commands` | List all ~50 slash commands with source files |
+| `list_commands` | List all ~100 slash commands with source files |
 | `get_tool_source` | Read full source of any tool (e.g. BashTool, FileEditTool) |
 | `get_command_source` | Read source of any slash command (e.g. review, mcp) |
 | `read_source_file` | Read any file from `src/` by path |
@@ -195,15 +195,15 @@ claude mcp remove claude-code-explorer
 ```
 src/
 ├── main.tsx                 # Entrypoint — Commander.js CLI parser + React/Ink renderer
-├── QueryEngine.ts           # Core LLM API caller (~46K lines)
-├── Tool.ts                  # Tool type definitions (~29K lines)
-├── commands.ts              # Command registry (~25K lines)
+├── QueryEngine.ts           # Core LLM API caller (1,297 lines)
+├── Tool.ts                  # Tool type definitions (794 lines)
+├── commands.ts              # Command registry (758 lines)
 ├── tools.ts                 # Tool registry
 ├── context.ts               # System/user context collection
 ├── cost-tracker.ts          # Token cost tracking
 │
 ├── tools/                   # Agent tool implementations (~40)
-├── commands/                # Slash command implementations (~50)
+├── commands/                # Slash command implementations (~100)
 ├── components/              # Ink UI components (~140)
 ├── services/                # External service integrations
 ├── hooks/                   # React hooks (incl. permission checks)
@@ -342,10 +342,10 @@ Notable flags: `PROACTIVE` · `KAIROS` · `BRIDGE_MODE` · `DAEMON` · `VOICE_MO
 
 | File | Lines | Purpose |
 |------|------:|---------|
-| `QueryEngine.ts` | ~46K | Core LLM API engine — streaming, tool loops, thinking mode, retries, token counting |
-| `Tool.ts` | ~29K | Base types/interfaces for all tools — input schemas, permissions, progress state |
-| `commands.ts` | ~25K | Command registration & execution with conditional per-environment imports |
-| `main.tsx` | — | CLI parser + React/Ink renderer; parallelizes MDM, keychain, and GrowthBook on startup |
+| `QueryEngine.ts` | 1,297 | Core LLM API engine — streaming, tool loops, thinking mode, retries, token counting |
+| `Tool.ts` | 794 | Base types/interfaces for all tools — input schemas, permissions, progress state |
+| `commands.ts` | 758 | Command registration & execution with conditional per-environment imports |
+| `main.tsx` | 4,684 | REPL bootstrap + CLI parser; parallelizes MDM, keychain, and GrowthBook on startup |
 
 ---
 
@@ -357,7 +357,7 @@ Notable flags: `PROACTIVE` · `KAIROS` · `BRIDGE_MODE` · `DAEMON` · `VOICE_MO
 | Language | TypeScript (strict) |
 | Terminal UI | [React](https://react.dev) + [Ink](https://github.com/vadimdemedes/ink) |
 | CLI Parsing | [Commander.js](https://github.com/tj/commander.js) (extra-typings) |
-| Schema Validation | [Zod v4](https://zod.dev) |
+| Schema Validation | [Zod v3](https://zod.dev) |
 | Code Search | [ripgrep](https://github.com/BurntSushi/ripgrep) (via GrepTool) |
 | Protocols | [MCP SDK](https://modelcontextprotocol.io) · LSP |
 | API | [Anthropic SDK](https://docs.anthropic.com) |

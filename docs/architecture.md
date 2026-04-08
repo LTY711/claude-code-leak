@@ -18,7 +18,7 @@ The entire UI layer is built with **React + Ink** (React for the terminal), maki
 
 ## Core Pipeline
 
-### 1. Entrypoint (`src/main.tsx`)
+### 1. Entrypoint (`src/entrypoints/cli.tsx`)
 
 The CLI parser is built with [Commander.js](https://github.com/tj/commander.js) (`@commander-js/extra-typings`). On startup, it:
 
@@ -38,7 +38,7 @@ The CLI parser is built with [Commander.js](https://github.com/tj/commander.js) 
 
 Startup performs parallel initialization: MDM policy reads, Keychain prefetch, feature flag checks, then core init.
 
-### 3. Query Engine (`src/QueryEngine.ts`, ~46K lines)
+### 3. Query Engine (`src/QueryEngine.ts` + `src/query.ts`)
 
 The heart of Claude Code. Handles:
 
@@ -129,7 +129,7 @@ Standard React hooks pattern. Notable categories:
 
 ### Config Schemas (`src/schemas/`)
 
-Zod v4-based schemas for all configuration:
+Zod v3-based schemas for all configuration:
 
 - User settings
 - Project-level settings
@@ -218,7 +218,7 @@ Claude Code uses a **single-threaded event loop** (Bun/Node.js model) with:
 
 ## See Also
 
-- [Tools Reference](tools.md) — Complete catalog of all 40 agent tools
+- [Tools Reference](tools.md) — Complete catalog of all ~40 agent tools
 - [Commands Reference](commands.md) — Complete catalog of all slash commands
 - [Subsystems Guide](subsystems.md) — Bridge, MCP, permissions, skills, plugins, and more
 - [Exploration Guide](exploration-guide.md) — How to navigate this codebase

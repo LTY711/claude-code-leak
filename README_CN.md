@@ -11,8 +11,8 @@
 
 ## 目录
 
-- [文档 (`docs/`)](#文档-docs) — 架构、子系统、工具、命令、桥接层
-- [缺失模块说明](#缺失模块说明108-个模块) — 108 个被 feature gate 移除的模块
+- [文档 (`docs/`)](#文档-docs) — 架构、子系统、工具、命令、桥接层、Buddy/Vim/Keybindings/OAuth
+- [缺失模块说明](#缺失模块说明约-96-个模块) — 约 96 个被 feature gate 移除的模块
 - [架构概览](#架构概览) — 入口 → 查询引擎 → 工具/服务/状态
 - [构建说明](#构建说明) — 如何尝试本地构建
 
@@ -20,23 +20,48 @@
 
 ## 文档 (`docs/`)
 
-代码库的结构性文档，便于研究和探索。
+代码库的结构性文档与深度分析报告。
 
 ```
 docs/
 ├── architecture.md       # 整体架构深度解析
-├── subsystems.md         # 主要子系统详细说明
-├── tools.md              # 全部 ~40 个 Agent 工具参考
+├── subsystems.md         # 主要子系统详细说明（含 Buddy、Vim、Keybindings、OAuth）
+├── tools.md              # 全部 40 个 Agent 工具参考
 ├── commands.md           # 全部斜杠命令参考
 ├── bridge.md             # VS Code / JetBrains IDE 桥接层
-└── exploration-guide.md  # 如何导航和研究本源码库
+├── exploration-guide.md  # 如何导航和研究本源码库
+│
+└── zh/                   # 中文翻译版（结构性文档）
+    ├── architecture.md
+    ├── subsystems.md
+    ├── tools.md
+    ├── commands.md
+    ├── bridge.md
+    └── exploration-guide.md
+│
+├── en/                   # English 深度分析报告
+├── zh/                   # 中文深度分析报告
+├── ja/                   # 日本語深度分析報告
+└── ko/                   # 한국어 심층 분석 보고서
 ```
+
+### 深度分析报告
+
+基于 v2.1.88 反编译源码，覆盖四种语言。
+
+| # | 主题 | 核心发现 | EN | 中文 | 日本語 | 한국어 |
+|---|------|---------|-----|------|--------|--------|
+| 01 | **遥测与隐私** | 双层分析管道（Anthropic + Datadog）。环境指纹、进程指标、每个事件携带会话/用户 ID。**没有面向用户的退出开关**。 | [EN](docs/en/01-telemetry-and-privacy.md) | [中文](docs/zh/01-遥测与隐私分析.md) | [日本語](docs/ja/01-テレメトリとプライバシー.md) | [한국어](docs/ko/01-텔레메트리와-프라이버시.md) |
+| 02 | **隐藏功能与代号** | 动物代号体系（Capybara v8、Tengu、**Numbat** 下一代）。Feature flag 掩盖用途。隐藏命令：`/btw`、`/stickers`。 | [EN](docs/en/02-hidden-features-and-codenames.md) | [中文](docs/zh/02-隐藏功能与模型代号.md) | [日本語](docs/ja/02-隠し機能とコードネーム.md) | [한국어](docs/ko/02-숨겨진-기능과-코드네임.md) |
+| 03 | **卧底模式** | Anthropic 员工在公开仓库自动进入卧底模式。模型指令："**不要暴露你的掩护身份**"。**没有强制关闭选项。** | [EN](docs/en/03-undercover-mode.md) | [中文](docs/zh/03-卧底模式分析.md) | [日本語](docs/ja/03-アンダーカバーモード.md) | [한국어](docs/ko/03-언더커버-모드.md) |
+| 04 | **远程控制与 Killswitch** | 每小时轮询 `/api/claude_code/settings`。危险变更弹出阻塞对话框 — **拒绝 = 程序退出**。GrowthBook 可无同意改变任何用户行为。 | [EN](docs/en/04-remote-control-and-killswitches.md) | [中文](docs/zh/04-远程控制与紧急开关.md) | [日本語](docs/ja/04-リモート制御とキルスイッチ.md) | [한국어](docs/ko/04-원격-제어와-킬스위치.md) |
+| 05 | **未来路线图** | **Numbat** 代号确认。**KAIROS** = 完全自主代理模式，心跳 `<tick>`、推送通知、PR 订阅。语音模式（push-to-talk）已就绪。 | [EN](docs/en/05-future-roadmap.md) | [中文](docs/zh/05-未来路线图.md) | [日本語](docs/ja/05-今後のロードマップ.md) | [한국어](docs/ko/05-향후-로드맵.md) |
 
 ---
 
-## 缺失模块说明（108 个模块）
+## 缺失模块说明（约 96 个模块）
 
-> **源码不完整。** 108 个被 `feature()` 门控的模块**未包含**在 npm 包中。
+> **源码不完整。** 约 96 个被 `feature()` 门控的模块**未包含**在 npm 包中。
 > 它们仅存在于 Anthropic 的内部 monorepo 中，在编译时被死代码消除。
 > **无法**从 `cli.js`、`sdk-tools.d.ts` 或任何已发布的制品中恢复。
 
@@ -149,7 +174,7 @@ docs/
   Bun 的 `feature()` 是**编译时内建函数**：
   - 在 Anthropic 内部构建中返回 `true` → 代码保留在 bundle 中
   - 在发布构建中返回 `false` → 代码被死代码消除
-  - 108 个模块在已发布的制品中根本不存在
+  - 约 96 个模块在已发布的制品中根本不存在
 
 ---
 
@@ -174,7 +199,7 @@ Copyright (c) Anthropic. All rights reserved.
 | 源文件 (.ts/.tsx) | ~1,916 |
 | 代码行数 | ~519,426 |
 | 最大单文件 | `query.ts` (~785KB) |
-| 内置工具 | ~43 |
+| 内置工具 | ~40 |
 | 斜杠命令 | ~100+ |
 | 依赖 (node_modules) | ~192 个包 |
 | 运行时 | Bun（编译为 Node.js >= 18 bundle）|
@@ -242,7 +267,7 @@ src/
 ├── services/                # 业务逻辑层
 ├── state/                   # 应用状态
 ├── tasks/                   # 任务实现
-├── tools/                   # 43 个工具实现
+├── tools/                   # ~40 个工具实现
 ├── types/                   # 类型定义
 ├── utils/                   # 工具函数（最大目录）
 ├── vim/                     # Vim 模式支持
@@ -284,7 +309,7 @@ src/
 - `feature()` 调用是 Bun 编译时内建函数 — 在打包时解析，缺少 Anthropic 内部的 feature flag 值
 - `MACRO.VERSION` 在构建时注入
 - `process.env.USER_TYPE === 'ant'` 部分是 Anthropic 内部的
-- 108 个被 feature gate 移除的模块在 `src/` 中不存在，编译会报错
+- 约 96 个被 feature gate 移除的模块在 `src/` 中不存在，编译会报错
 - 编译后的 `cli.js` 是一个自包含的 12MB bundle，只需 Node.js >= 18
 
 可以运行 `bun run build` 尝试构建，但预期会因缺失模块而失败。

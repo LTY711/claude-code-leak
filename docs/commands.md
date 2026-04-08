@@ -53,6 +53,7 @@ const command = {
 | `/security-review` | `security-review.ts` | Security-focused code review |
 | `/advisor` | `advisor.ts` | Get architectural or design advice |
 | `/bughunter` | `bughunter/` | Find potential bugs in the codebase |
+| `/ultrareview` | `review/ultrareviewCommand.tsx` | AI-powered ultra review with extended analysis |
 
 ## Session & Context
 
@@ -141,6 +142,8 @@ const command = {
 | `/init-verifiers` | `init-verifiers.ts` | Set up verifier hooks |
 | `/onboarding` | `onboarding/` | Run the first-time setup wizard |
 | `/terminalSetup` | `terminalSetup/` | Configure terminal integration |
+| `/install-github-app` | `install-github-app/` | Install the Claude Code GitHub App |
+| `/install-slack-app` | `install-slack-app/` | Install the Claude Code Slack integration |
 
 ## IDE & Desktop Integration
 
@@ -180,8 +183,8 @@ const command = {
 | `/chrome` | `chrome/` | Chrome extension integration |
 | `/issue` | `issue/` | File a GitHub issue |
 | `/statusline` | `statusline.tsx` | Customize the status line |
-| `/thinkback` | `thinkback/` | Replay Claude's thinking process |
-| `/thinkback-play` | `thinkback-play/` | Animated thinking replay |
+| `/think-back` | `thinkback/` | Replay Claude's thinking process |
+| `/thinkback-play` | `thinkback-play/` | Replay Claude's thinking process with animation |
 | `/passes` | `passes/` | Multi-pass execution |
 | `/x402` | `x402/` | x402 payment protocol integration |
 

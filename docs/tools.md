@@ -1,6 +1,6 @@
 # Tools Reference
 
-> Complete catalog of all ~40 agent tools in Claude Code.
+> Complete catalog of all 40 agent tools in Claude Code.
 
 ---
 
@@ -68,7 +68,7 @@ src/tools/MyTool/
 |------|-------------|-----------|
 | **BashTool** | Execute shell commands in bash | No |
 | **PowerShellTool** | Execute PowerShell commands (Windows) | No |
-| **REPLTool** | Run code in a REPL session (Python, Node, etc.) | No |
+| **REPLTool** | Run code in a REPL session (Python, Node, etc.) — *仅限 Anthropic 内部用户（`ant`）* | No |
 
 ## Agent & Orchestration Tools
 
@@ -82,7 +82,7 @@ src/tools/MyTool/
 | **ExitPlanModeTool** | Exit planning mode, resume execution | No |
 | **EnterWorktreeTool** | Isolate work in a git worktree | No |
 | **ExitWorktreeTool** | Exit worktree isolation | No |
-| **SleepTool** | Pause execution (proactive mode) | Yes |
+| **SleepTool** | Pause execution (proactive mode) — *需要 `PROACTIVE` / `KAIROS` feature flag* | Yes |
 | **SyntheticOutputTool** | Generate structured output | Yes |
 
 ## Task Management Tools
@@ -132,7 +132,7 @@ src/tools/MyTool/
 | Tool | Description | Read-Only |
 |------|-------------|-----------|
 | **AskUserQuestionTool** | Prompt the user for input during execution | Yes |
-| **BriefTool** | Generate a brief/summary | Yes |
+| **BriefTool** | Generate a brief/summary — *需要 `KAIROS_BRIEF` feature flag* | Yes |
 | **ConfigTool** | Read or modify Claude Code configuration | No |
 
 ---

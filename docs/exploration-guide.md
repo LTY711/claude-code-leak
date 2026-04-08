@@ -12,14 +12,14 @@ This is a **read-only reference codebase** — there's no build system or test s
 
 | What | Where |
 |------|-------|
-| CLI entrypoint | `src/main.tsx` |
-| Core LLM engine | `src/QueryEngine.ts` (~46K lines) |
-| Tool definitions | `src/Tool.ts` (~29K lines) |
-| Command registry | `src/commands.ts` (~25K lines) |
+| CLI entrypoint | `src/entrypoints/cli.tsx` |
+| Core LLM engine | `src/QueryEngine.ts` (1,297 lines) + `src/query.ts` (1,730 lines) |
+| Tool definitions | `src/Tool.ts` (794 lines) |
+| Command registry | `src/commands.ts` (758 lines) |
 | Tool registry | `src/tools.ts` |
 | Context collection | `src/context.ts` |
-| All tool implementations | `src/tools/` (40 subdirectories) |
-| All command implementations | `src/commands/` (~85 subdirectories + 15 files) |
+| All tool implementations | `src/tools/` (43 subdirectories, ~50K lines total) |
+| All command implementations | `src/commands/` (~102 entries, ~27K lines total) |
 
 ---
 
@@ -67,7 +67,7 @@ src/tools/BashTool/
 Trace from user input to API response:
 
 ```
-src/main.tsx                    ← CLI parsing
+src/entrypoints/cli.tsx         ← CLI parsing
   → src/replLauncher.tsx        ← REPL session start
     → src/QueryEngine.ts        ← Core engine
       → src/services/api/       ← Anthropic SDK client
@@ -146,11 +146,17 @@ The largest files contain the most logic and are worth studying:
 
 | File | Lines | What's Inside |
 |------|-------|---------------|
-| `QueryEngine.ts` | ~46K | Streaming, tool loops, retries, token counting |
-| `Tool.ts` | ~29K | Tool types, `buildTool`, permission models |
-| `commands.ts` | ~25K | Command registry, conditional loading |
-| `main.tsx` | — | CLI parser, startup optimization |
-| `context.ts` | — | OS, shell, git, user context assembly |
+| `main.tsx` | 4,684 | REPL bootstrap, CLI parser, startup optimization |
+| `query.ts` | 1,730 | Core agent loop implementation |
+| `QueryEngine.ts` | 1,297 | SDK/headless query lifecycle engine |
+| `Tool.ts` | 794 | Tool interface + `buildTool` factory |
+| `commands.ts` | 758 | Slash command registry and loading |
+| `setup.ts` | 478 | First-run setup flow |
+| `tools/` (entire dir) | ~50K | All 43 tool implementations |
+| `commands/` (entire dir) | ~27K | All ~100 slash command implementations |
+
+> Note: The bundle sizes quoted elsewhere (~46K, ~29K) refer to compiled `cli.js` sections, not TypeScript source files.
+
 
 ---
 

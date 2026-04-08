@@ -1,6 +1,6 @@
-# Subsystems Guide
+# 子系统指南
 
-> Detailed documentation of Claude Code's major subsystems.
+> Claude Code 各主要子系统的详细文档。此为英文原版，中文翻译版正在整合中。
 
 ---
 
@@ -313,7 +313,7 @@ startRecording()  ──► native audio module (cpal)
       ↓
 Audio chunks (Buffer)
       ↓
-connectVoiceStream() → WebSocket → wss://api.anthropic.com/api/ws/speech_to_text/voice_stream
+connectVoiceStream() → WebSocket → api.anthropic.com/voice_stream
       ↓
 TranscriptText (interim) / TranscriptEndpoint (final)
       ↓
@@ -332,7 +332,7 @@ Native module is lazy-loaded on first keypress (~1–8s cold, ~1s warm) to avoid
 
 ### WebSocket STT
 
-- Connects to `wss://api.anthropic.com/api/ws/speech_to_text/voice_stream` (not `claude.ai` — avoids CloudFlare TLS fingerprinting)
+- Connects to `api.anthropic.com/voice_stream` (not `claude.ai` — avoids CloudFlare TLS fingerprinting)
 - Sends audio chunks as binary WebSocket frames
 - KeepAlive sent every 8s to prevent idle timeout
 - STT provider: `conversation_engine` (Deepgram Nova 3 via `tengu_cobalt_frost` gate)
@@ -449,7 +449,7 @@ User UUID → salt 'friend-2026-401' → Mulberry32 PRNG → CompanionBones
 
 - **18 species**: duck, goose, blob, cat, dragon, octopus, owl, penguin, turtle, snail, ghost, axolotl, capybara, cactus, robot, rabbit, mushroom, chonk
 - **5 rarity tiers**: Common (60%), Uncommon (25%), Rare (10%), Epic (4%), Legendary (1%)
-- **7 cosmetic hats**: crown, tophat, propeller, halo, wizard, beanie, tinyduck (plus `none` — no hat)
+- **7 hats**: crown, tophat, propeller, halo, wizard, beanie, tinyduck
 - **6 eye types**: ·, ✦, ×, ◉, @, °
 - **1% shiny chance**: sparkle variant of any species
 
@@ -507,7 +507,7 @@ NORMAL ── idle ── count ── operator ── find ── g ── repl
 
 `VimState` is either `INSERT { insertedText }` or `NORMAL { command: CommandState }`.
 
-`CommandState` has 11 variants for multi-key command sequences (e.g., `d` → operator state, `dw` → execute delete-word): idle, count, operator, operatorCount, operatorFind, operatorTextObj, find, g, operatorG, replace, indent.
+`CommandState` has 13 variants for multi-key command sequences (e.g., `d` → operator state, `dw` → execute delete-word).
 
 ### Supported Commands
 
@@ -551,7 +551,7 @@ Manages keyboard shortcuts across 18 UI contexts with platform-specific defaults
 
 ### Contexts
 
-20 named contexts: `Chat`, `Global`, `Settings`, `Diff`, `Tabs`, `Vim Normal`, `Vim Insert`, `Autocomplete`, `Confirmation`, `Transcript`, `HistorySearch`, `Task`, `ThemePicker`, `Scroll`, `Help`, `Attachments`, `Footer`, `MessageSelector`, `MessageActions`, `DiffDialog`, `ModelPicker`, `Select`, `Plugin` — each with independent binding tables.
+18 named contexts: `Chat`, `Global`, `Settings`, `Diff`, `Tabs`, `Vim Normal`, `Vim Insert`, and more — each with independent binding tables.
 
 ### Architecture
 
@@ -590,7 +590,7 @@ Default bindings  ─────────────┘
 
 ### Actions
 
-Named actions (e.g., `app:interrupt`, `chat:submit`, `select:accept`, `vim:enterInsert`) or `null` to unbind a key. Slash command bindings use `command:*` prefix. Actions are conditionally included based on active feature flags.
+172 named actions (e.g., `app:interrupt`, `chat:submit`, `select:accept`) or `null` to unbind. Slash command bindings use `command:*` prefix.
 
 ### Validation
 
